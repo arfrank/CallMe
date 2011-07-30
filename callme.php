@@ -20,7 +20,7 @@ if (!$callme_settings) {
 
 
 if ($accountSid && $authToken && !get_option('callme_create_app_url')) {
-	require( WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Twilio.php');
+	include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Twilio.php';
 	//$client = new Services_Twilio($accountSid, $authToken);
 	//$app = $client->account->applications->create('callme_app');
 	
@@ -96,11 +96,28 @@ if ($_POST['callme_type']) {
 	}
 	update_option('callme_settings',$callme_settings );
 }
-if ($_POST['widget_text']) {
+if ($_POST['widget_location']) {
+	if (!isset($callme_settings['widget'])) {
+		$callme_settings['widget'] = array();
+	}
+	switch ($_POST['widget_location']) {
+		case 'topleft':
+			$callme_settings['widget']['location'] = 'topleft';
+			break;
+		case 'topright':
+			$callme_settings['widget']['location'] = 'topright';
+			break;
+		case 'bottomleft':
+			$callme_settings['widget']['location'] = 'bottomleft';
+			break;
+		
+		default:
+			$callme_settings['widget']['location'] = 'bottomright';
+			break;
+	}
+	update_option('callme_settings',$callme_settings );
 }
-
 //Functions below for page loading things
-
 
 //Page for admin settings
 function callme_conf(){
@@ -115,7 +132,15 @@ function callme_conf(){
 				<form action="#" method="post" accept-charset="utf-8">
 					<p><label>Twilio Account SID:<input type="text" name="twilio_sid" value="<?php echo (isset($callme_settings['twilio']['sid']) ? $callme_settings['twilio']['sid']:""); ?>"></label></p>
 					<p><label>Twilio Auth Token: <input type="text" name="twilio_token" value="<?php echo (isset($callme_settings['twilio']['token']) ? $callme_settings['twilio']['token']:""); ?>"></label></p>
-				
+				<h3>Widget Settings</h3>
+				<p>
+					<label>Location: <select name="widget_location">
+						<option value="topright">Top Right</option>
+						<option value="bottomright">Bottom Right</option>
+						<option value="topleft">Top Left</option>
+						<option value="bottomleft">Bottom Left</option>
+					</select></label>
+				</p>
 				<input type="submit" name="save_settings" value="Save Settings">
 			</form>
 				
@@ -212,18 +237,21 @@ function WPCallMe_HTML(){
 	global $callme_settings;
 	$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) );
 	if (true or !is_admin()) {
-		include PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Twilio/Capability.php';
+		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Twilio/Capability.php';
 		
 		// put your Twilio API credentials here
-		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token'])) {
+		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token']) && isset($callme_settings['widget']['type'])) {
 			$capability = new Services_Twilio_Capability($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
 			//$capability->allowClientOutgoing('APabe7650f654fc34655fc81ae71caa3ff');
 			$token = $capability->generateToken();
+			if (isset($callme_settings['widget']['type'])) {
+				$callme_widget_text = $callme_settings[$callme_settings['widget']['type']]['widget_text'];
+			}
 			?>
 			<script>
 			var token = '<?php echo $token; ?>';
 			</script>
-			<div id="callme_widget">
+			<div id="callme_widget" class="<?php echo (isset($callme_settings['widget']['location']) ? $callme_settings['widget']['location']:'bottomright'); ?>">
 				<?php echo $callme_widget_text; ?>
 			</div>
 			<?php
