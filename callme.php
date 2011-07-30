@@ -7,46 +7,48 @@ Author: Aaron Frank
 Author URI: http://www.arfrank.com
 License: GPL2
 */
-$callme_settings = get_option('callme_settings',false);
-if (!$callme_settings) {
-	add_option('callme_settings',array(), '', 'yes');
-/*	add_option('callme_twilio_sid', '', '', 'yes');
-	add_option('callme_twilio_token', '', '', 'yes');
-	add_option('callme_application_url', '', '', 'yes');
-	add_option('callme_widget_type', '', '', 'yes'); */
-	$callme_settings = array();
-}
-
-
-
-if ($accountSid && $authToken && !get_option('callme_create_app_url')) {
-	include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Twilio.php';
-	//$client = new Services_Twilio($accountSid, $authToken);
-	//$app = $client->account->applications->create('callme_app');
-	
-}
-
-
-
-//Add the settings pages
-function callme_config_page() {
-	if ( function_exists('add_submenu_page') )
-		add_submenu_page('plugins.php', __('CallMe Configuration'), __('CallMe Configuration'), 'manage_options', 'callme-key-config', 'callme_conf');
-}
-
-//Add the settings link to plugin row
-function callme_plugin_action_links( $links, $file ) {
-	if ( $file == plugin_basename( dirname(__FILE__).'/callme.php' ) ) {
-		$links[] = '<a href="plugins.php?page=callme-key-config">'.__('Settings').'</a>';
-	}
-	return $links;
-}
+$callme_settings = get_option('callme_settings',array());
 
 add_filter( 'plugin_action_links', 'callme_plugin_action_links',10,2);
 add_action( 'admin_menu', 'callme_config_page' );
 add_action( 'wp_print_scripts', 'WPCallMe_Scripts');
 add_action( 'wp_print_styles', 'WPCallMe_Styles');
 add_action( 'loop_start', 'WPCallMe_HTML');
+add_action('wp_dashboard_setup', 'callme_wp_dashboard_setup');
+
+
+register_activation_hook(__FILE__, 'callme_activate');
+
+function callme_activate(){
+	add_option('callme_settings',array(), '', 'yes');
+}
+
+if (isset($callme_settings['twilio']['sid']) && $callme_settings['twilio']['token'] && !isset($callme_settings['twilio']['appid'])) {
+	include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+	//$client = new Services_Twilio($accountSid, $authToken);
+	//$app = $client->account->applications->create('callme_app');
+	//$callme_settings['twilio']['appid'] = $app;
+	//update_option('callme_settings',$callme_settings);
+}
+
+function callme_app_page(){
+	
+}
+
+//Add the settings pages
+function callme_config_page() {
+	if ( function_exists('add_submenu_page') )
+		add_submenu_page('plugins.php', __('CallMe Configuration'), __('CallMe Configuration'), 'manage_options', 'callme-config', 'callme_conf');
+}
+
+//Add the settings link to plugin row
+function callme_plugin_action_links( $links, $file ) {
+	if ( $file == plugin_basename( dirname(__FILE__).'/callme.php' ) ) {
+		$links[] = '<a href="plugins.php?page=callme-config">'.__('Settings').'</a>';
+	}
+	return $links;
+}
+
 
 function validate_number(){
 	
@@ -58,7 +60,6 @@ if ($_POST['twilio_sid'] and $_POST['twilio_token']) {
 	}
 	$callme_settings['twilio']['sid'] = $_POST['twilio_sid'];
 	$callme_settings['twilio']['token'] = $_POST['twilio_token'];
-	print_r($callme_settings);
 	update_option( 'callme_settings',$callme_settings );
 }
 if ($_POST['callme_type']) {
@@ -122,6 +123,8 @@ if ($_POST['widget_location']) {
 //Page for admin settings
 function callme_conf(){
 	global $callme_settings;
+	$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) );
+	echo $callme_plugin_url;
 	?>
 		<div>
 			<h1>CallMe Config Page</h1>
@@ -135,10 +138,10 @@ function callme_conf(){
 				<h3>Widget Settings</h3>
 				<p>
 					<label>Location: <select name="widget_location">
-						<option value="topright">Top Right</option>
-						<option value="bottomright">Bottom Right</option>
-						<option value="topleft">Top Left</option>
-						<option value="bottomleft">Bottom Left</option>
+						<option value="bottomright" <?php echo ((isset($callme_settings['widget']['location']) && $callme_settings['widget']['location']=='bottomright' ) ? 'selected':''); ?>>Bottom Right</option>
+						<option value="topright" <?php echo ((isset($callme_settings['widget']['location']) && $callme_settings['widget']['location']=='topright') ?'selected':''); ?>>Top Right</option>
+						<option value="topleft" <?php echo ((isset($callme_settings['widget']['location']) && $callme_settings['widget']['location']=='topleft' ) ? 'selected':''); ?>>Top Left</option>
+						<option value="bottomleft" <?php echo ((isset($callme_settings['widget']['location']) && $callme_settings['widget']['location']=='bottomleft' ) ? 'selected':''); ?>>Bottom Left</option>
 					</select></label>
 				</p>
 				<input type="submit" name="save_settings" value="Save Settings">
@@ -237,7 +240,7 @@ function WPCallMe_HTML(){
 	global $callme_settings;
 	$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) );
 	if (true or !is_admin()) {
-		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Twilio/Capability.php';
+		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio/Capability.php';
 		
 		// put your Twilio API credentials here
 		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token']) && isset($callme_settings['widget']['type'])) {
@@ -251,7 +254,7 @@ function WPCallMe_HTML(){
 			<script>
 			var token = '<?php echo $token; ?>';
 			</script>
-			<div id="callme_widget" class="<?php echo (isset($callme_settings['widget']['location']) ? $callme_settings['widget']['location']:'bottomright'); ?>">
+			<div id="callme_widget" class="callme_<?php echo (isset($callme_settings['widget']['location']) ? $callme_settings['widget']['location']:'bottomright'); ?>">
 				<?php echo $callme_widget_text; ?>
 			</div>
 			<?php
@@ -274,7 +277,6 @@ function callme_wp_dashboard_setup() {
 /**
  * use hook, to integrate new widget
  */
-add_action('wp_dashboard_setup', 'callme_wp_dashboard_setup');
 
 
 ?>
