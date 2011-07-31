@@ -246,7 +246,7 @@ function WPCallMe_Scripts(){
 function WPCallMe_HTML(){
 	global $callme_settings;
 	$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) );
-	if (true or !is_admin()) {
+	if (!is_admin()) {
 		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio/Capability.php';
 		
 		// put your Twilio API credentials here
