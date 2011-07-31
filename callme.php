@@ -250,7 +250,7 @@ function WPCallMe_HTML(){
 		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio/Capability.php';
 		
 		// put your Twilio API credentials here
-		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token']) && isset($callme_settings['widget']['type']) && isset($callme_settings['twilio']['app_sid'])) {
+		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token']) && isset($callme_settings['widget']) && isset($callme_settings['widget']['type']) && isset($callme_settings['twilio']['app_sid'])) {
 			$capability = new Services_Twilio_Capability($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
 			$capability->allowClientOutgoing($callme_settings['twilio']['app_sid']);
 			$token = $capability->generateToken();
