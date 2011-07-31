@@ -23,21 +23,18 @@ function callme_activate(){
 	add_option('callme_settings',array(), '', 'yes');
 }
 
-if (isset($callme_settings['twilio']['sid']) && $callme_settings['twilio']['token'] && !isset($callme_settings['twilio']['appid'])) {
+if (isset($callme_settings['twilio']['sid']) && $callme_settings['twilio']['token'] && !isset($callme_settings['twilio']['app_sid'])) {
 	include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
-	print_r($callme_settings);
-	$client = new Services_Twilio($callme_settings['twilio']['sid'], $callme_setting['twilio']['token']);
+	$client = new Services_Twilio($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
 	$app = $client->account->applications->create('callme_app',
 						array(
-							'api_version'=>'2010-04-01',
-							'voice_url'=>trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) ),
-							'voice_method'=>'GET'
+							'ApiVersion'=>'2010-04-01',
+							'VoiceUrl'=>trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/app_landing.php',
+							'VoiceMethod'=>'GET'
 							)
 						);
-	//error_log(print_r($app,1));
-	//print_r($app);
-	//$callme_settings['twilio']['appid'] = $app;
-	//update_option('callme_settings',$callme_settings);
+	$callme_settings['twilio']['app_sid'] = $app->sid;
+	update_option('callme_settings',$callme_settings);
 }
 
 function callme_app_page(){
@@ -83,7 +80,7 @@ if ($_POST['callme_type']) {
 			$callme_settings['widget']['type'] = 'callme';
 			$callme_settings['callme']['widget_text'] = $_POST['widget_text'];
 			if ($_POST['your_number']) {
-				# code...
+				$callme_settings['callme']['your_number'] = $_POST['your_number'];
 			}
 			break;
 			
@@ -132,8 +129,6 @@ if ($_POST['widget_location']) {
 //Page for admin settings
 function callme_conf(){
 	global $callme_settings;
-	$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) );
-	echo $callme_plugin_url;
 	?>
 		<div>
 			<h1>CallMe Config Page</h1>
@@ -178,7 +173,7 @@ function callme_conf(){
 							<label>Widget Text: <input type="text" name="widget_text" value="<?php echo (isset($callme_settings['callme']['widget_text']) ? $callme_settings['callme']['widget_text']:'Call Me!'); ?>"></label>
 						</p>
 						<p>
-							<label>Number to reach you at: 	<input type="text" name="your_number" value=""></label>
+							<label>Number to reach you at: 	<input type="text" name="your_number" value="<?php echo (isset($callme_settings['callme']['your_number']) ? $callme_settings['callme']['your_number']:''); ?>"></label>
 						</p>
 						
 						<input type="submit" value="Save">
@@ -234,7 +229,7 @@ function WPCallMe_Scripts(){
 	 if (!is_admin()){
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery-form');
-		//wp_enqueue_script('callme_twilio_script','http://static.twilio.com/libs/twiliojs/1.0/twilio.min.js');
+		wp_enqueue_script('callme_twilio_script','http://static.twilio.com/libs/twiliojs/1.0/twilio.min.js');
 		wp_enqueue_script('callme_public_script', $callme_plugin_url.'/js/callme.js', array('jquery', 'jquery-form','callme_twilio_script'));
 	}else{
 	//Admin site scripts
@@ -252,9 +247,9 @@ function WPCallMe_HTML(){
 		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio/Capability.php';
 		
 		// put your Twilio API credentials here
-		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token']) && isset($callme_settings['widget']['type'])) {
+		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token']) && isset($callme_settings['widget']['type']) && isset($callme_settings['twilio']['app_sid'])) {
 			$capability = new Services_Twilio_Capability($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
-			//$capability->allowClientOutgoing('APabe7650f654fc34655fc81ae71caa3ff');
+			$capability->allowClientOutgoing($callme_settings['twilio']['app_sid']);
 			$token = $capability->generateToken();
 			if (isset($callme_settings['widget']['type'])) {
 				$callme_widget_text = $callme_settings[$callme_settings['widget']['type']]['widget_text'];
