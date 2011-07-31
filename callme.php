@@ -7,7 +7,10 @@ Author: Aaron Frank
 Author URI: http://www.arfrank.com
 License: GPL2
 */
-$callme_settings = get_option('callme_settings',array());
+$callme_settings = get_option('callme_settings',false);
+if (!$callme_settings) {
+	add_option('callme_settings',array(), '', 'yes');
+}
 
 add_filter( 'plugin_action_links', 'callme_plugin_action_links',10,2);
 add_action( 'admin_menu', 'callme_config_page' );
