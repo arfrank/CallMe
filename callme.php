@@ -25,8 +25,17 @@ function callme_activate(){
 
 if (isset($callme_settings['twilio']['sid']) && $callme_settings['twilio']['token'] && !isset($callme_settings['twilio']['appid'])) {
 	include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
-	//$client = new Services_Twilio($accountSid, $authToken);
-	//$app = $client->account->applications->create('callme_app');
+	print_r($callme_settings);
+	$client = new Services_Twilio($callme_settings['twilio']['sid'], $callme_setting['twilio']['token']);
+	$app = $client->account->applications->create('callme_app',
+						array(
+							'api_version'=>'2010-04-01',
+							'voice_url'=>trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) ),
+							'voice_method'=>'GET'
+							)
+						);
+	//error_log(print_r($app,1));
+	//print_r($app);
 	//$callme_settings['twilio']['appid'] = $app;
 	//update_option('callme_settings',$callme_settings);
 }
