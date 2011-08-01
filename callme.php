@@ -259,6 +259,7 @@ function WPCallMe_HTML(){
 			include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
 		}elseif(file_exists('/'.dirname( plugin_basename(__FILE__)).'/php/TwilioLibrary/Service	s/Twilio.php')){
 			//HACK FOR DOTCLOUD
+			error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php cant be found');
 			include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
 		}else{
 			throw new Exception("Can't find twilio.php file", 1);
