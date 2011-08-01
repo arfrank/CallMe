@@ -11,7 +11,11 @@ if (!function_exists('add_action')) {
     }
 }
 include 'TwilioLibrary/Services/Twilio.php'
+//Validate
 
+//Somehow store in the db
+
+//And be able to retrieve later
 
 
 ?>
