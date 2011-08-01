@@ -27,7 +27,15 @@ function callme_activate(){
 }
 
 if (isset($callme_settings['twilio']['sid']) && $callme_settings['twilio']['token'] && !isset($callme_settings['twilio']['app_sid'])) {
-	include ABSPATH.'/wp-content/plugins/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+	if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')) {
+		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+	}elseif(file_exists(dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')){
+		//HACK FOR DOTCLOUD
+		include dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+	}else{
+		throw new Exception("Can't find twilio.php file", 1);
+		
+	}
 	$client = new Services_Twilio($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
 	$app = $client->account->applications->create('callme_app',
 						array(
@@ -246,8 +254,15 @@ function WPCallMe_Scripts(){
 function WPCallMe_HTML(){
 	global $callme_settings;
 	if (!is_admin()) {
-		include ABSPATH.'/wp-content/plugins/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio/Capability.php';
-		
+		if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')) {
+			include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+		}elseif(file_exists(dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')){
+			//HACK FOR DOTCLOUD
+			include dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+		}else{
+			throw new Exception("Can't find twilio.php file", 1);
+		}
+
 		// put your Twilio API credentials here
 		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token']) && isset($callme_settings['widget']) && isset($callme_settings['widget']['type']) && isset($callme_settings['twilio']['app_sid'])) {
 			$capability = new Services_Twilio_Capability($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
