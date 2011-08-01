@@ -14,7 +14,7 @@ if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/Tw
 	//HACK FOR DOTCLOUD
 	error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php cant be found');
 	include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
-}elseif(file_exists('php/TwilioLibrary/Services/Twilio.php'){
+}elseif(file_exists('php/TwilioLibrary/Services/Twilio.php')){
 	include 'php/TwilioLibrary/Services/Twilio.php';
 }else{
 	$twilio_found = false;
