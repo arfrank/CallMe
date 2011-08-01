@@ -61,7 +61,7 @@ if (true or $twilio_found) {
 		$app = $client->account->applications->create('callme_app',
 							array(
 								'ApiVersion'=>'2010-04-01',
-								'VoiceUrl'=>trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/app_landing.php',
+								'VoiceUrl'=>trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'.'CallMe'.'/php/app_landing.php',
 								'VoiceMethod'=>'GET'
 								)
 							);
