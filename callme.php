@@ -23,9 +23,6 @@ function load_twilio_library(){
 		include './php/TwilioLibrary/Services/Twilio.php';
 		return true;
 	}else{
-		error_log(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php');
-		error_log('/'.dirname( plugin_basename(__FILE__)).'/php/TwilioLibrary/Services/Twilio.php');
-		error_log('./php/TwilioLibrary/Services/Twilio.php');
 		return false;
 	}
 	
@@ -170,7 +167,7 @@ if (true or $twilio_found) {
 					<h3>Twilio Credentials</h3>
 					<form action="#" method="post" accept-charset="utf-8">
 						<p><label>Twilio Account SID:<input type="text" name="twilio_sid" value="<?php echo (isset($callme_settings['twilio']['sid']) ? $callme_settings['twilio']['sid']:""); ?>"></label></p>
-						<p><label>Twilio Auth Token: <input type="text" name="twilio_token" value="<?php echo (isset($callme_settings['twilio']['token']) ? $callme_settings['twilio']['token']:""); ?>"></label></p>
+						<p><label>Twilio Auth Token: <input type="password" name="twilio_token" value="<?php echo (isset($callme_settings['twilio']['token']) ? $callme_settings['twilio']['token']:""); ?>"></label></p>
 					<h3>Widget Settings</h3>
 					<p>
 						<label>Location: <select name="widget_location">
