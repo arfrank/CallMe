@@ -27,7 +27,7 @@ if ($validator->validate($signature, $url, $postVars)) {
 }
 */
 //do some twilio security validation up here
-include 'TwilioLibrary/Services/Twilio/Twiml.php';
+
 $twiml = new Services_Twilio_Twiml();
 $callme_settings = get_option('callme_settings');
 if ($callme_settings) {
