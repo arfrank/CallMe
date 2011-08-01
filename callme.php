@@ -13,14 +13,14 @@ register_activation_hook(__FILE__, 'callme_activate');
 //This is to make sure it loads the twilio helper libraries, was getting alot of problems on certain platforms (dotcloud)
 function load_twilio_library(){
 	if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')) {
-		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+		require_once(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php');
 		return true;
 	}elseif(file_exists('/'.dirname( plugin_basename(__FILE__)).'/php/TwilioLibrary/Services/Twilio.php')){
 		//HACK FOR DOTCLOUD
-		include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+		require_once('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php');
 		return true;
 	}elseif(file_exists('./php/TwilioLibrary/Services/Twilio.php')){
-		include './php/TwilioLibrary/Services/Twilio.php';
+		require_once('./php/TwilioLibrary/Services/Twilio.php');
 		return true;
 	}else{
 		return false;
