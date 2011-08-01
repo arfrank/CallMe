@@ -17,7 +17,6 @@ if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/Tw
 }elseif(file_exists('./php/TwilioLibrary/Services/Twilio.php')){
 	include './php/TwilioLibrary/Services/Twilio.php';
 }else{
-	error_log()
 	$twilio_found = false;
 }
 if ($twilio_found) {
