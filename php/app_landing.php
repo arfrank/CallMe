@@ -1,4 +1,6 @@
 <?php
+
+//A hack from another plugin
 if (!function_exists('add_action')) {
     $wp_root = '../../../..';
     if (file_exists($wp_root.'/wp-load.php')) {

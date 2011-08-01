@@ -59,7 +59,8 @@ if (true or $twilio_found) {
 							array(
 								'ApiVersion'=>'2010-04-01',
 								'VoiceUrl'=>trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'.'CallMe'.'/php/app_landing.php',
-								'VoiceMethod'=>'GET'
+								'VoiceMethod'=>'GET',
+								'StatusCallback'=>trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'.'CallMe'.'/php/callback_landing.php'
 								)
 							);
 		$callme_settings['twilio']['app_sid'] = $app->sid;
@@ -258,7 +259,7 @@ if (true or $twilio_found) {
 		 if (!is_admin()){
 			wp_enqueue_script('jquery');
 			wp_enqueue_script('jquery-form');
-			wp_enqueue_script('callme_twilio_script','http://static.twilio.com/libs/twiliojs/1.0/twilio.min.js');
+			//wp_enqueue_script('callme_twilio_script','http://static.twilio.com/libs/twiliojs/1.0/twilio.min.js');
 			wp_enqueue_script('callme_public_script', $callme_plugin_url.'/js/callme.js', array('jquery', 'jquery-form','callme_twilio_script'));
 		}else{
 		//Admin site scripts
@@ -297,6 +298,23 @@ if (true or $twilio_found) {
 	 */
 	function callme_dashboard() {
 		echo '<h3>Recent Activity</h3>';
+		?>
+			<table>
+				<thead>
+					<tr>
+						<th>Time</th>
+						<th>Action</th>
+						<th>Length</th>
+						<th>Poop</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>data</td>
+					</tr>
+				</tbody>
+			</table>
+		<?php
 	}
 	/**
 	 * add Dashboard Widget via function wp_add_dashboard_widget()
