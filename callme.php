@@ -15,7 +15,7 @@ function load_twilio_library(){
 	if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')) {
 		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
 		return true;
-	}elseif(file_exists('/'.dirname( plugin_basename(__FILE__)).'/php/TwilioLibrary/Service	s/Twilio.php')){
+	}elseif(file_exists('/'.dirname( plugin_basename(__FILE__)).'/php/TwilioLibrary/Services/Twilio.php')){
 		//HACK FOR DOTCLOUD
 		include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
 		return true;
@@ -23,6 +23,9 @@ function load_twilio_library(){
 		include './php/TwilioLibrary/Services/Twilio.php';
 		return true;
 	}else{
+		error_log(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php');
+		error_log('/'.dirname( plugin_basename(__FILE__)).'/php/TwilioLibrary/Services/Twilio.php');
+		error_log('./php/TwilioLibrary/Services/Twilio.php');
 		return false;
 	}
 	
@@ -38,7 +41,7 @@ function callme_activate(){
 }
 
 $twilio_found = load_twilio_library();
-if ($twilio_found) {
+if (true or $twilio_found) {
 	$callme_settings = get_option('callme_settings',false);
 	if (!$callme_settings) {
 		add_option('callme_settings',array(), '', 'yes');
