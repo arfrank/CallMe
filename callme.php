@@ -29,9 +29,10 @@ function callme_activate(){
 if (isset($callme_settings['twilio']['sid']) && $callme_settings['twilio']['token'] && !isset($callme_settings['twilio']['app_sid'])) {
 	if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')) {
 		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
-	}elseif(file_exists(dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')){
+	}elseif(file_exists('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')){
 		//HACK FOR DOTCLOUD
-		include dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+		error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php doesnt exist');
+		include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
 	}else{
 		throw new Exception("Can't find twilio.php file", 1);
 		
