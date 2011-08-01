@@ -9,7 +9,7 @@ if (!function_exists('add_action')) {
         require_once($wp_root.'/wp-config.php');
     }
 }
-include 'TwilioLibrary/Services/Twilio.php'
+include 'TwilioLibrary/Services/Twilio.php';
 
 /*
 $token = 'YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY';
