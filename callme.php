@@ -262,6 +262,7 @@ function WPCallMe_HTML(){
 			error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php cant be found');
 			include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
 		}else{
+			error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php cant be found');
 			throw new Exception("Can't find twilio.php file", 1);
 		}
 
