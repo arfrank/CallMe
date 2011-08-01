@@ -10,33 +10,34 @@ License: GPL2
 $twilio_found = true;
 register_activation_hook(__FILE__, 'callme_activate');
 
-function callme_activate(){
-	add_option('callme_settings',array(), '', 'yes');
+//This is to make sure it loads the twilio helper libraries, was getting alot of problems on certain platforms (dotcloud)
+function load_twilio_library(){
 	if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')) {
 		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+		return true;
 	}elseif(file_exists('/'.dirname( plugin_basename(__FILE__)).'/php/TwilioLibrary/Service	s/Twilio.php')){
 		//HACK FOR DOTCLOUD
-		error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php cant be found');
 		include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+		return true;
 	}elseif(file_exists('./php/TwilioLibrary/Services/Twilio.php')){
 		include './php/TwilioLibrary/Services/Twilio.php';
+		return true;
 	}else{
-		throw new Exception("Can't find Twilio Library to load. Something if up with you're directory paths or permissions.", 1);
+		return false;
+	}
+	
+}
+
+function callme_activate(){
+	add_option('callme_settings',array(), '', 'yes');
+	$tw = load_twilio_library();
+	if (!$tw) {
+		throw new Exception("UNABLE TO FIND TWILIO LIBRARY", 1);
+		
 	}
 }
 
-
-if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')) {
-	include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
-}elseif(file_exists('/'.dirname( plugin_basename(__FILE__)).'/php/TwilioLibrary/Service	s/Twilio.php')){
-	//HACK FOR DOTCLOUD
-	error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php cant be found');
-	include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
-}elseif(file_exists('./php/TwilioLibrary/Services/Twilio.php')){
-	include './php/TwilioLibrary/Services/Twilio.php';
-}else{
-	$twilio_found = false;
-}
+$twilio_found = load_twilio_library();
 if ($twilio_found) {
 	$callme_settings = get_option('callme_settings',false);
 	if (!$callme_settings) {
