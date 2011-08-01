@@ -1,3 +1,8 @@
 Twilio Client CallMe++ Wordpress Plugin!
 
-It's here! It's here! It's finally here! The Wordpress plugin to allow you to: let your readers call you, leave you a voicemail or even voicechat with each other live from the browser
+It's here! It's here! It's finally here! The Wordpress plugin to allow you to: let your readers call you, leave you a voicemail or even voice chat with each other live from their browser. All it takes is this plugin, and a real live Twilio account!
+
+Installation Steps:
+Step 1.  Get Twilio account.  HTTP://WWW.TWILIO.COM
+Step 2.  Install the plugin!
+Step 3.  Configure the plugin with your Twilio Credentials and what type of service you want to enable for your blog
