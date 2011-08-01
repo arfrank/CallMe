@@ -27,7 +27,7 @@ function callme_activate(){
 }
 
 if (isset($callme_settings['twilio']['sid']) && $callme_settings['twilio']['token'] && !isset($callme_settings['twilio']['app_sid'])) {
-	include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+	include ABSPATH.'/wp-content/plugins/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
 	$client = new Services_Twilio($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
 	$app = $client->account->applications->create('callme_app',
 						array(
@@ -245,9 +245,8 @@ function WPCallMe_Scripts(){
 //HTML for main site to inject
 function WPCallMe_HTML(){
 	global $callme_settings;
-	$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) );
 	if (!is_admin()) {
-		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio/Capability.php';
+		include ABSPATH.'/wp-content/plugins/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio/Capability.php';
 		
 		// put your Twilio API credentials here
 		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token']) && isset($callme_settings['widget']) && isset($callme_settings['widget']['type']) && isset($callme_settings['twilio']['app_sid'])) {
