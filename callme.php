@@ -7,6 +7,18 @@ Author: Aaron Frank
 Author URI: http://www.arfrank.com
 License: GPL2
 */
+if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')) {
+	include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+}elseif(file_exists('/'.dirname( plugin_basename(__FILE__)).'/php/TwilioLibrary/Service	s/Twilio.php')){
+	//HACK FOR DOTCLOUD
+	error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php cant be found');
+	include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+}else{
+	error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php cant be found');
+	throw new Exception("Can't find twilio.php file", 1);
+}
+
+
 $callme_settings = get_option('callme_settings',false);
 if (!$callme_settings) {
 	add_option('callme_settings',array(), '', 'yes');
@@ -27,16 +39,6 @@ function callme_activate(){
 }
 
 if (isset($callme_settings['twilio']['sid']) && $callme_settings['twilio']['token'] && !isset($callme_settings['twilio']['app_sid'])) {
-	if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')) {
-		include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
-	}elseif(file_exists('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')){
-		//HACK FOR DOTCLOUD
-		error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php doesnt exist');
-		include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
-	}else{
-		throw new Exception("Can't find twilio.php file", 1);
-		
-	}
 	$client = new Services_Twilio($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
 	$app = $client->account->applications->create('callme_app',
 						array(
@@ -255,17 +257,6 @@ function WPCallMe_Scripts(){
 function WPCallMe_HTML(){
 	global $callme_settings;
 	if (!is_admin()) {
-		if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')) {
-			include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
-		}elseif(file_exists('/'.dirname( plugin_basename(__FILE__)).'/php/TwilioLibrary/Service	s/Twilio.php')){
-			//HACK FOR DOTCLOUD
-			error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php cant be found');
-			include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
-		}else{
-			error_log('/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php cant be found');
-			throw new Exception("Can't find twilio.php file", 1);
-		}
-
 		// put your Twilio API credentials here
 		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token']) && isset($callme_settings['widget']) && isset($callme_settings['widget']['type']) && isset($callme_settings['twilio']['app_sid'])) {
 			$capability = new Services_Twilio_Capability($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
