@@ -248,7 +248,7 @@ if (true or $twilio_found) {
 
 	//Styles to inject into WP main site
 	function WPCallMe_Styles(){
-		$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) );
+		$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/CallMe';
 		if (!is_admin()) {
 			wp_enqueue_style( 'callme_public_style', $callme_plugin_url.'/css/callme.css',false,rand(),'screen');
 		}
@@ -256,7 +256,7 @@ if (true or $twilio_found) {
 
 	//Scripts to inject
 	function WPCallMe_Scripts(){
-		$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) );
+		$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/CallMe';
 		//Main site scripts
 		 if (!is_admin()){
 			wp_enqueue_script('jquery');
