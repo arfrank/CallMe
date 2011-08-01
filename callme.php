@@ -154,6 +154,14 @@ if (true or $twilio_found) {
 		}
 		update_option('callme_settings',$callme_settings );
 	}
+	
+	if ($_POST['widget_stylesheet']) {
+		if (!isset($callme_settings['widget'])) {
+			$callme_settings['widget'] = array();
+		}
+		$callme_settings['widget']['stylesheet'] = $_POST['widget_stylesheet'];
+		update_option('callme_settings', $callme_settings);
+	}
 	//Functions below for page loading things
 
 	//Page for admin settings
@@ -285,7 +293,10 @@ if (true or $twilio_found) {
 				<script>
 				var token = '<?php echo $token; ?>';
 				</script>
-				<div id="callme_widget" class="callme_<?php echo (isset($callme_settings['widget']['location']) ? $callme_settings['widget']['location']:'bottomright'); ?>">
+				<div id="callme_widget" class="callme_<?php echo (isset($callme_settings['widget']['location']) ? $callme_settings['widget']['location']:'bottomright'); ?>" 
+					<?php if (isset($callme_settings['widget']) && isset($callme_settings['widget']['stylesheet'])) {
+						echo 'style="'.$callme_settings['widget']['stylesheet'].'"';
+					} ?>>
 					<?php echo $callme_widget_text; ?>
 				</div>
 				<?php
