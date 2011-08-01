@@ -256,9 +256,9 @@ function WPCallMe_HTML(){
 	if (!is_admin()) {
 		if (file_exists(WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')) {
 			include WP_PLUGIN_DIR.'/'. dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
-		}elseif(file_exists(dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php')){
+		}elseif(file_exists('/'.dirname( plugin_basename(__FILE__)).'/php/TwilioLibrary/Service	s/Twilio.php')){
 			//HACK FOR DOTCLOUD
-			include dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
+			include '/'.dirname( plugin_basename(__FILE__) ).'/php/TwilioLibrary/Services/Twilio.php';
 		}else{
 			throw new Exception("Can't find twilio.php file", 1);
 		}
