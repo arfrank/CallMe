@@ -190,9 +190,10 @@ if (true or $twilio_found) {
 		//Get a list of usable from numbers to make a phone number clal from.
 		try {
 			
-			$caller_id = $twilio_client->account->outgoing_caller_ids->getPage();
+			$caller_ids = $twilio_client->account->outgoing_caller_ids->getPage();
 		} catch (Exception $e) {
 			error_log($e);
+			$caller_ids = array();
 		}
 		?>
 			<div>
@@ -242,9 +243,21 @@ if (true or $twilio_found) {
 								<label>Widget Text: <input type="text" name="widget_text" value="<?php echo (isset($callme_settings['callme']['widget_text']) ? $callme_settings['callme']['widget_text']:'Call Me!'); ?>"></label>
 							</p>
 							<p>
-								<label><select name="twilio_number" multiple>
-									<option value=""></option>
-								</select></label>
+								<label>Twilio Number:
+								<?php if (count($caller_ids)) { ?>
+										<select name="twilio_number">
+											<option value=""></option>
+										</select>
+								<?php
+									}else{
+										?>You do not have any numbers setup with Twilio. In order to use the CallMe feature you must either purchase a number from Twilio, or validate a number.<?php
+									}
+								?>
+								
+								</label>
+								<div class="callme_caption">
+									Select a number to display when receiving numbers from the widget.
+								</div>
 							</p>
 							<p>
 								<label>Number to reach you at: 	<input type="text" name="your_number" value="<?php echo (isset($callme_settings['callme']['your_number']) ? $callme_settings['callme']['your_number']:''); ?>"></label>
