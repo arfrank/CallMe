@@ -278,6 +278,9 @@ if (true or $twilio_found) {
 							<p>
 								<label>Conference Call Welcome Message: <textarea name="conference_text"><?php echo (isset($callme_settings['conference']['conference_text']) ? $callme_settings['conference']['conference_text']:'Welcome to the group!')	; ?></textarea></label>
 							</p>
+							<p>
+								<label>Auto-connect conference call on connection: <input type="checkbox" name="conference_autoconnect" value="yes" <?php ?>></label>
+							</p>
 							<input type="hidden" name="callme_type" value="conference">
 							<input type="submit" value="Save">
 						</form>

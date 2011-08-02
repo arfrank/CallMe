@@ -8,7 +8,9 @@ jQuery(document).ready(function($) {
 		if ($callme_widget.hasClass('callme_topleft') || $callme_widget.hasClass('callme_topright') ) {
 			$callme_widget.animate({'top':'0px'});	
 		}
-		
+		if ($autoconnect_conference) {
+			call();
+		};
       });
 
       Twilio.Device.error(function (error) {
