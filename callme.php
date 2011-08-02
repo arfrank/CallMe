@@ -322,7 +322,8 @@ if (true or $twilio_found) {
 			wp_enqueue_script('jquery');
 			wp_enqueue_script('jquery-form');
 			wp_enqueue_script('callme_twilio_script','http://static.twilio.com/libs/twiliojs/1.0/twilio.min.js');
-			wp_enqueue_script('callme_public_script', $callme_plugin_url.'/js/callme.js', array('jquery', 'jquery-form','callme_twilio_script'));
+			wp_enqueue_script('callme_public_script', $callme_plugin_url.'/js/callme.js?id='.rand(), array('jquery', 'jquery-form','callme_twilio_script'));
+
 		}else{
 		//Admin site scripts
 			  wp_enqueue_script('jquery');
