@@ -1,4 +1,5 @@
 #callme_widget{
+	display:none;
 	position: fixed;
 	text-align:center;
 	padding:5px 10px 7px 10px;
@@ -16,8 +17,7 @@
 }
 .callme_bottomright{
 	right:140px;
-	bottom:0px;
-	
+	bottom:-20px;
 	-webkit-border-top-left-radius: 5px;
 	-webkit-border-top-right-radius: 5px;
 	-moz-border-radius-topleft: 5px;
@@ -33,7 +33,7 @@
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 	left:140px;
-	bottom:0px;
+	bottom:-20px;
 }
 .callme_topright{
 	-webkit-border-bottom-left-radius: 5px;
@@ -43,7 +43,7 @@
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
 	right:140px;
-	top:0px;
+	top:-20px;
 }
 .callme_topleft{
 	-webkit-border-bottom-left-radius: 5px;
@@ -53,7 +53,7 @@
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
 	left:140px;
-	top:0px;
+	top:-20px;
 }
 
 .callme_caption{
