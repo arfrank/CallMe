@@ -357,8 +357,7 @@ if (true or $twilio_found) {
 				?>
 				var token = '<?php echo $token; ?>';
 				</script>
-				<div id="callme_widget" class="callme_<?php echo (isset($callme_settings['widget']['location']) ? $callme_settings['widget']['location']:'bottomright'); ?>" 
-					<?php if (isset($callme_settings['widget']) && isset($callme_settings['widget']['stylesheet'])) {
+				<div id="callme_widget" class="callme_<?php echo (isset($callme_settings['widget']['location']) ? $callme_settings['widget']['location']:'bottomright'); ?>" <?php if (isset($callme_settings['widget']) && isset($callme_settings['widget']['stylesheet'])) {
 						echo 'style="'.$callme_settings['widget']['stylesheet'].'"';
 					} ?>>
 					<?php echo $callme_widget_text; ?>
