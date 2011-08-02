@@ -40,6 +40,8 @@ function callme_activate(){
 $twilio_found = load_twilio_library();
 if (true or $twilio_found) {
 	$callme_settings = get_option('callme_settings',false);
+	$callme_settings_changed = false;
+
 	if (!$callme_settings) {
 		add_option('callme_settings',array(), '', 'yes');
 	}
@@ -52,19 +54,21 @@ if (true or $twilio_found) {
 	add_action('wp_dashboard_setup', 'callme_wp_dashboard_setup');
 
 
-
-	if (isset($callme_settings['twilio']['sid']) && $callme_settings['twilio']['token'] && !isset($callme_settings['twilio']['app_sid'])) {
-		$client = new Services_Twilio($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
-		$app = $client->account->applications->create('callme_app',
-							array(
-								'ApiVersion'=>'2010-04-01',
-								'VoiceUrl'=>trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'.'CallMe'.'/php/app_landing.php',
-								'VoiceMethod'=>'GET',
-								'StatusCallback'=>trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'.'CallMe'.'/php/callback_landing.php'
-								)
-							);
-		$callme_settings['twilio']['app_sid'] = $app->sid;
-		update_option('callme_settings',$callme_settings);
+	if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token'])){
+		$twilio_client = new Services_Twilio($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
+		if(!isset($callme_settings['twilio']['app_sid'])) {
+			$twilio_client = new Services_Twilio($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
+			$app = $twilio_client->account->applications->create('callme_app',
+								array(
+									'ApiVersion'=>'2010-04-01',
+									'VoiceUrl'=>trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'.'CallMe'.'/php/app_landing.php',
+									'VoiceMethod'=>'GET',
+									'StatusCallback'=>trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'.'CallMe'.'/php/callback_landing.php'
+									)
+								);
+			$callme_settings['twilio']['app_sid'] = $app->sid;
+			$callme_settings_changed = true;
+		}
 	}
 
 	function callme_app_page(){
@@ -84,8 +88,9 @@ if (true or $twilio_found) {
 		}
 		return $links;
 	}
-
-
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	//Begin option handling
 	function validate_number(){
 	
 	}
@@ -96,7 +101,7 @@ if (true or $twilio_found) {
 		}
 		$callme_settings['twilio']['sid'] = $_POST['twilio_sid'];
 		$callme_settings['twilio']['token'] = $_POST['twilio_token'];
-		update_option( 'callme_settings',$callme_settings );
+		$callme_settings_changed = true;
 	}
 	if ($_POST['callme_type']) {
 		if (!isset($callme_settings['widget'])) {
@@ -131,7 +136,7 @@ if (true or $twilio_found) {
 				$callme_settings['voicemail']['widget_text'] = $_POST['widget_text'];
 				break;
 		}
-		update_option('callme_settings',$callme_settings );
+		$callme_settings_changed = true;
 	}
 	if ($_POST['widget_location']) {
 		if (!isset($callme_settings['widget'])) {
@@ -152,7 +157,7 @@ if (true or $twilio_found) {
 				$callme_settings['widget']['location'] = 'bottomright';
 				break;
 		}
-		update_option('callme_settings',$callme_settings );
+		$callme_settings_changed = true;
 	}
 	
 	if ($_POST['widget_stylesheet']) {
@@ -160,13 +165,35 @@ if (true or $twilio_found) {
 			$callme_settings['widget'] = array();
 		}
 		$callme_settings['widget']['stylesheet'] = $_POST['widget_stylesheet'];
+		$callme_settings_changed = true;
+	}
+	
+	if ($_POST['twilio_number']) {
+		if (!isset($callme_settings['callme'])) {
+			$callme_settings['callme'] = array();
+		}
+		$callme_settings['callme']['twilio_number'] = $_POST['twilio_number'];
+		$callme_settings_changed = true;
+	}
+	if ($callme_settings_changed) {
 		update_option('callme_settings', $callme_settings);
 	}
+
+	//End option handling
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	//Functions below for page loading things
 
 	//Page for admin settings
 	function callme_conf(){
-		global $callme_settings;
+		global $callme_settings, $twilio_client;
+		//Get a list of usable from numbers to make a phone number clal from.
+		try {
+			
+			$caller_id = $twilio_client->account->outgoing_caller_ids->getPage();
+		} catch (Exception $e) {
+			error_log($e);
+		}
 		?>
 			<div>
 				<h1>CallMe Config Page</h1>
@@ -186,6 +213,10 @@ if (true or $twilio_found) {
 							<option value="bottomleft" <?php echo ((isset($callme_settings['widget']['location']) && $callme_settings['widget']['location']=='bottomleft' ) ? 'selected':''); ?>>Bottom Left</option>
 						</select></label>
 					</p>
+					<p>
+						<label>Stylize: <textarea name="widget_stylesheet"><?php echo (isset($callme_settings['widget']['stylesheet'])? $callme_settings['widget']['stylesheet']: '' ); ?></textarea></label>
+						<div class="callme_caption">Please enter valid css above in order to correctly stylize the widget.</div>
+					</p>
 					<input type="submit" name="save_settings" value="Save Settings">
 				</form>
 				
@@ -203,12 +234,17 @@ if (true or $twilio_found) {
 					<div id="callme" class="selected_widget_inputs"  <?php echo ($callme_widget_type!='callme'? 'style="display:none"':''); ?>>
 						<h3>Call Me!</h3>
 						<p>
-							Visitors will be able to directly call you from your blog.
+							Visitors will be able to directly call you from your blog.  In order to call you, you will need a Twilio number to call from.
 						</p>
 						<form action="#" method="post" accept-charset="utf-8">
 							<input type="hidden" name="callme_type" value="callme">
 							<p>
 								<label>Widget Text: <input type="text" name="widget_text" value="<?php echo (isset($callme_settings['callme']['widget_text']) ? $callme_settings['callme']['widget_text']:'Call Me!'); ?>"></label>
+							</p>
+							<p>
+								<label><select name="twilio_number" multiple>
+									<option value=""></option>
+								</select></label>
 							</p>
 							<p>
 								<label>Number to reach you at: 	<input type="text" name="your_number" value="<?php echo (isset($callme_settings['callme']['your_number']) ? $callme_settings['callme']['your_number']:''); ?>"></label>
@@ -257,6 +293,8 @@ if (true or $twilio_found) {
 		$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/CallMe';
 		if (!is_admin()) {
 			wp_enqueue_style( 'callme_public_style', $callme_plugin_url.'/css/callme.css',false,rand(),'screen');
+		}else{
+			wp_enqueue_style('callme_admin_style', $callme_plugin_url.'/css/callme.css', false,rand(),'screen');
 		}
 	}
 
@@ -267,7 +305,7 @@ if (true or $twilio_found) {
 		 if (!is_admin()){
 			wp_enqueue_script('jquery');
 			wp_enqueue_script('jquery-form');
-			wp_enqueue_script('callme_twilio_script','http://static.twilio.com/libs/twiliojs/1.0/twilio.min.js');
+			//wp_enqueue_script('callme_twilio_script','http://static.twilio.com/libs/twiliojs/1.0/twilio.min.js');
 			wp_enqueue_script('callme_public_script', $callme_plugin_url.'/js/callme.js', array('jquery', 'jquery-form','callme_twilio_script'));
 		}else{
 		//Admin site scripts

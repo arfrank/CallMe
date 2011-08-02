@@ -34,11 +34,12 @@ if ($callme_settings) {
 	//print_r($callme_settings);
 	switch ($callme_settings['widget']['type']) {
 		case 'callme':
-			$twiml->dial($callme_settings['callme']['your_number']);
+			$twiml->dial($callme_settings['callme']['your_number'], array('from'=>$callme_settings['twilio_number']));
+			//needs a from for dialing out
 			break;
 		case 'conference':
 			$twiml->say($callme_settings['conference']['conference_text']);
-			$twiml->conference($callme_settings['conference']['widget_text'].$callme_settings['twilio']['app_sid']);
+			$twiml->dial()->conference($callme_settings['conference']['widget_text'].$callme_settings['twilio']['app_sid']);
 			break;
 		case 'voicemail':
 			$twiml->record();
