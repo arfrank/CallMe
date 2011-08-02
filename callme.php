@@ -345,6 +345,15 @@ if (true or $twilio_found) {
 				}
 				?>
 				<script>
+				<?php
+					if (isset($callme_settings['widget']['type']) and $callme_settings['widget']['type'] == 'conference') {
+						?>var autoconnect_conference = <?php echo(isset($callme_settings['conference']['autoconnect']) ? $callme_settings['conference']['autoconnect']: 'false'); ?>;
+						<?php
+					}else{
+						?>var autoconnect_conference = false;
+						<?php
+					}
+				?>
 				var token = '<?php echo $token; ?>';
 				</script>
 				<div id="callme_widget" class="callme_<?php echo (isset($callme_settings['widget']['location']) ? $callme_settings['widget']['location']:'bottomright'); ?>" 
