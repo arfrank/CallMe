@@ -1,7 +1,8 @@
 jQuery(document).ready(function($) {
+	var callme_widget = $('#callme_widget');
+	var connected = false;
 	Twilio.Device.setup(token);
 	Twilio.Device.ready(function (device) {
-		var callme_widget = $('#callme_widget');
 		setTimeout(function(){
 			if (callme_widget.hasClass('callme_bottomleft') || callme_widget.hasClass('callme_bottomright') ) {
 				callme_widget.animate({'bottom':'0px'});
@@ -16,11 +17,23 @@ jQuery(document).ready(function($) {
 	});
 
 	Twilio.Device.error(function (error) {
+		connected = false;
+		callme_widget.html("An error occurred. Please try again.");			
 		console.log('An error occurred loading the CallMe Widget - '+error);
 	});
+	
 
 	function call() {
-		Twilio.Device.connect();
+		if (connected) {
+			connected = false;
+			Twilio.Device.disconnect()
+			callme_widget.html(callme_widget.data('standard_text'));			
+		}else{
+			Twilio.Device.connect();
+			connected = true;
+			callme_widget.data('standard_text',callme_widget.html()),
+			callme_widget.html("Click to Disconnect");
+		}
 	}
 	$('#callme_widget').click(function(event) {
 		call();

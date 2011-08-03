@@ -39,7 +39,11 @@ if ($callme_settings) {
 			break;
 		case 'conference':
 			$twiml->say($callme_settings['conference']['conference_text']);
-			$twiml->dial()->conference($callme_settings['conference']['widget_text'].$callme_settings['twilio']['app_sid']);
+			if (isset($callme_settings['conference']['length']) && $callme_settings['conference']['length']) {
+				$twiml->dial('', array('timeLimit'=>$callme_settings['conference']['length']))->conference($callme_settings['conference']['widget_text'].$callme_settings['twilio']['app_sid']);
+			}else{
+				$twiml->dial()->conference($callme_settings['conference']['widget_text'].$callme_settings['twilio']['app_sid']);
+			}
 			break;
 		case 'voicemail':
 			$twiml->record();
