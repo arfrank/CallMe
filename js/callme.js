@@ -18,16 +18,20 @@ jQuery(document).ready(function($) {
 
 	Twilio.Device.error(function (error) {
 		connected = false;
-		callme_widget.html("An error occurred. Please try again.");			
+		callme_widget.html("An error occurred. Please try again.");
 		console.log('An error occurred loading the CallMe Widget - '+error);
 	});
 	
+	Twilio.Device.disconnect(function(){
+		connected = false;
+		callme_widget.html(callme_widget.data('standard_text'));
+	});
 
 	function call() {
 		if (connected) {
 			connected = false;
 			Twilio.Device.disconnect()
-			callme_widget.html(callme_widget.data('standard_text'));			
+			callme_widget.html(callme_widget.data('standard_text'));
 		}else{
 			Twilio.Device.connect();
 			connected = true;
