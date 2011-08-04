@@ -57,7 +57,6 @@ if (true or $twilio_found) {
 	if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token'])){
 		$twilio_client = new Services_Twilio($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
 		if(!isset($callme_settings['twilio']['app_sid'])) {
-			$twilio_client = new Services_Twilio($callme_settings['twilio']['sid'], $callme_settings['twilio']['token']);
 			$app = $twilio_client->account->applications->create('callme_app',
 								array(
 									'ApiVersion'=>'2010-04-01',
@@ -67,6 +66,11 @@ if (true or $twilio_found) {
 									)
 								);
 			$callme_settings['twilio']['app_sid'] = $app->sid;
+			$callme_settings_changed = true;
+		}
+		if (!isset($callme_settings['twilio']['subaccount_sid'])) {
+			$sub_account = $twilio_client->accounts->create(array('FriendlyName'=>'callme_subaccount'));
+			$callme_settings['twilio']['subaccount_sid'] = $sub_account->sid;
 			$callme_settings_changed = true;
 		}
 	}
@@ -182,6 +186,18 @@ if (true or $twilio_found) {
 
 	//End option handling
 	/////////////////////////////////////////////////////////////////////////////////////////////////
+	//Utility functions
+	function phoneNumberFormat($number){
+		if(  preg_match( '/^\+\d(\d{3})(\d{3})(\d{4})$/', $number,  $matches ) )
+		{
+		    $result = $matches[1] . '-' .$matches[2] . '-' . $matches[3];
+		    return $result;
+		}
+	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	
 	
 	//Functions below for page loading things
 
@@ -189,13 +205,19 @@ if (true or $twilio_found) {
 	function callme_conf(){
 		global $callme_settings, $twilio_client;
 		//Get a list of usable from numbers to make a phone number clal from.
-		try {
-			
-			$caller_ids = $twilio_client->account->outgoing_caller_ids->getPage();
-		} catch (Exception $e) {
-			error_log($e);
-			$caller_ids = array();
+
+		$caller_ids = $twilio_client->account->outgoing_caller_ids->getPage();
+
+		$twilio_numbers = $twilio_client->account->incoming_phone_numbers->getPage();
+		
+		$phone_numbers = array();
+		foreach ($caller_ids->outgoing_caller_ids as $oci) {
+			$phone_numbers[] = $oci->phone_number;
 		}
+		foreach ($twilio_numbers->incoming_phone_numbers as $ipn) {
+			$phone_numbers[] = $ipn->phone_number;
+		}
+		print_r($phone_numbers);
 		?>
 			<div>
 				<h1>CallMe Config Page</h1>
@@ -245,9 +267,12 @@ if (true or $twilio_found) {
 							</p>
 							<p>
 								<label>Twilio Number:
-								<?php if (count($caller_ids)) { ?>
+								<?php if (count($phone_numbers)) { ?>
 										<select name="twilio_number">
-											<option value=""></option>
+											<?php foreach ($phone_numbers as $key=>$pn) {
+												?><option value="<?php echo  $pn; ?>"><?php echo phoneNumberFormat($pn); ?></option>
+											<?php } ?>
+											
 										</select>
 								<?php
 									}else{
@@ -277,10 +302,10 @@ if (true or $twilio_found) {
 								<label>Widget Text: <input type="text" name="widget_text" value="<?php echo (isset($callme_settings['conference']['widget_text']) ? $callme_settings['conference']['widget_text']:'Talk to other readers!')	; ?>"></label>
 							</p>
 							<p>
-								<label>Conference Call Welcome Message: <textarea name="conference_text"><?php echo (isset($callme_settings['conference']['conference_text']) ? $callme_settings['conference']['conference_text']:'Welcome to the group!')	; ?></textarea></label>
+								<label>Conference Call Welcome Message: <textarea name="conference_text"><?php echo (isset($callme_settings['conference']['conference_text']) ? $callme_settings['conference']['conference_text'] : 'Welcome to the group!'); ?></textarea></label>
 							</p>
 							<p>
-								<label>Auto-connect conference call on connection: <input type="checkbox" name="conference_autoconnect" value="yes" <?php ?>></label>
+								<label>Auto-connect conference call on connection: <input type="checkbox" name="conference_autoconnect" value="yes" <?php echo ((isset($callme_settings['conference']['autoconnect']) && $callme_settings['conference']['autoconnect']) ? "checked":"" ); ?>></label>
 							</p>
 							<p>
 								<label>Limit call length: <input type="text" name="conference_length" value="<?php echo (isset($callme_settings['conference']['length']) && $callme_settings['conference']['length']) ? $callme_settings['conference']['length'] : '' ?>"> seconds</label>
