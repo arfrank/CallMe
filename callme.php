@@ -217,7 +217,6 @@ if (true or $twilio_found) {
 		foreach ($twilio_numbers->incoming_phone_numbers as $ipn) {
 			$phone_numbers[] = $ipn->phone_number;
 		}
-		print_r($phone_numbers);
 		?>
 			<div>
 				<h1>CallMe Config Page</h1>
