@@ -40,7 +40,7 @@ if ($callme_settings) {
 	$headers = getallheaders();
 	$signature = (isset($headers['X-Twilio-Signature']) ? $headers['X-Twilio-Signature']:'');
 
-	if ($validator->validate($signature, $url, $postVars)) {
+//	if ($validator->validate($signature, $url, $postVars)) {
 
 		//do some twilio security validation up here
 
@@ -66,9 +66,9 @@ if ($callme_settings) {
 			break;
 		}
 		print $twiml;
-	}else {
-		echo "NOT VALID.  It might have been spoofed!";
-	}
+//	}else {
+//		echo "NOT VALID.  It might have been spoofed!";
+//	}
 
 
 }
