@@ -10,12 +10,13 @@ if (!function_exists('add_action')) {
 	}
 }
 require_once('TwilioLibrary/Services/Twilio.php');
+//require_once('TwilioLibrary/Services/Twilio/RequestValidator.php');
 $callme_settings = get_option('callme_settings');
 if ($callme_settings) {
 
 	$token = $callme_settings['twilio']['token'];
 
-	$validator = new Twilio_Services_RequestValidator($token);
+	$validator = new Services_Twilio_RequestValidator($token);
 
 	$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/CallMe';
 
