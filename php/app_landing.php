@@ -46,6 +46,7 @@ if ($callme_settings) {
 			}
 			break;
 		case 'voicemail':
+			$twiml->say($callme_settings['voicemail']['slapslapslap'])
 			$twiml->record();
 			break;
 	}

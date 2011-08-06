@@ -131,6 +131,7 @@ if (true or $twilio_found) {
 				$callme_settings['conference']['widget_text'] = $_POST['widget_text'];
 				$callme_settings['conference']['conference_text'] = $_POST['conference_text'];
 				$callme_settings['conference']['length'] = (is_numeric($_POST['conference_length']) && (int) $_POST['conference_length'] > 0) ? (int) $_POST['conference_length'] : 0;
+				$callme_settings['conference']['autoconnect'] = ($_POST['conference_autoconnect'] == 'yes'?true:false);
 				break;
 			
 			case 'voicemail':
@@ -376,7 +377,7 @@ if (true or $twilio_found) {
 				<script>
 				<?php
 					if (isset($callme_settings['widget']['type']) and $callme_settings['widget']['type'] == 'conference') {
-						?>var autoconnect_conference = <?php echo(isset($callme_settings['conference']['autoconnect']) ? $callme_settings['conference']['autoconnect']: 'false'); ?>;
+						?>var autoconnect_conference = <?php echo(isset($callme_settings['conference']['autoconnect']) ? $callme_settings['conference']['autoconnect'] : 'false'); ?>;
 						<?php
 					}else{
 						?>var autoconnect_conference = false;

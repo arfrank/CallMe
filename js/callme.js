@@ -10,10 +10,12 @@ jQuery(document).ready(function($) {
 			if (callme_widget.hasClass('callme_topleft') || callme_widget.hasClass('callme_topright') ) {
 				callme_widget.animate({'top':'0px'});	
 			}
+			if (autoconnect_conference != undefined && autoconnect_conference) {
+				setTimeout(function(){
+					call();
+				}, 1000);
+			};
 		}, 1000);
-		if (autoconnect_conference != undefined && autoconnect_conference) {
-			call();
-		};
 	});
 
 	Twilio.Device.error(function (error) {
