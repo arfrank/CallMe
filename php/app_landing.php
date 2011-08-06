@@ -35,14 +35,11 @@ if ($callme_settings) {
 
 	$callme_plugin_url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/CallMe';
 
-	$url = $callme_plugin_url.'/php/app_landing.php';
+	$url = $callme_plugin_url.$_SERVER['REQUEST_URI'];
 	$postVars = $_POST;
 	$headers = getallheaders();
-
 	$signature = (isset($headers['X-Twilio-Signature']) ? $headers['X-Twilio-Signature']:'');
-	error_log(print_r(getallheaders(),1));
-	error_log('signature: '.$signature);
-	error_log(print_r($_POST),1);
+
 	if ($validator->validate($signature, $url, $postVars)) {
 
 		//do some twilio security validation up here
