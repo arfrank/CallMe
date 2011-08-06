@@ -9,9 +9,24 @@ if (!function_exists('add_action')) {
 		require_once($wp_root.'/wp-config.php');
 	}
 }
+if (!function_exists('getallheaders')) 
+{
+    function getallheaders() 
+    {
+       foreach ($_SERVER as $name => $value) 
+       {
+           if (substr($name, 0, 5) == 'HTTP_') 
+           {
+               $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+           }
+       }
+       return $headers;
+    }
+}
 require_once('TwilioLibrary/Services/Twilio.php');
 //require_once('TwilioLibrary/Services/Twilio/RequestValidator.php');
 $callme_settings = get_option('callme_settings');
+
 if ($callme_settings) {
 
 	$token = $callme_settings['twilio']['token'];
@@ -23,6 +38,7 @@ if ($callme_settings) {
 	$url = $callme_plugin_url.'/php/app_landing.php';
 	$postVars = $_POST;
 	$headers = getallheaders();
+
 	$signature = (isset($headers['X-Twilio-Signature']) ? $headers['X-Twilio-Signature']:'');
 
 	if ($validator->validate($signature, $url, $postVars)) {
