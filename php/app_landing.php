@@ -47,7 +47,7 @@ if ($callme_settings) {
 			break;
 			case 'voicemail':
 				$twiml->say($callme_settings['voicemail']['welcome'])
-				$twiml->record();
+				$twiml->record(array('action'=>$callme_plugin_url.'/php/callback_landing.php'));
 			break;
 		}
 		print $twiml;
