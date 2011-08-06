@@ -140,6 +140,8 @@ if (true or $twilio_found) {
 				}
 				$callme_settings['widget']['type'] = 'voicemail';
 				$callme_settings['voicemail']['widget_text'] = $_POST['widget_text'];
+				$callme_settings['voicemail']['welcome'] = $_POST['voicemail_welcome'];
+				
 				break;
 		}
 		$callme_settings_changed = true;
@@ -206,7 +208,6 @@ if (true or $twilio_found) {
 	function callme_conf(){
 		global $callme_settings, $twilio_client;
 		//Get a list of usable from numbers to make a phone number clal from.
-
 		$caller_ids = $twilio_client->account->outgoing_caller_ids->getPage();
 
 		$twilio_numbers = $twilio_client->account->incoming_phone_numbers->getPage();
@@ -322,6 +323,9 @@ if (true or $twilio_found) {
 						<form action="#" method="post" accept-charset="utf-8">
 							<p>
 								<label>Widget Text: <input type="text" name="widget_text" value="<?php echo (isset($callme_settings['voicemail']['widget_text']) ? $callme_settings['voicemail']['widget_text']:'Leave me a voicemail!'); ?>"></label>
+							</p>
+							<p>
+								<label for="voicemail_welcome">Message for voicemail: <textarea name="voicemail_welcome" rows="8" cols="40"><?php echo (isset($callme_settings['voicemail']['welcome']) ? $callme_settings['voicemail']['welcome']:''); ?></textarea></label>
 							</p>
 							<input type="hidden" name="callme_type" value="voicemail">
 							<input type="submit" value="Save">
