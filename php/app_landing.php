@@ -40,13 +40,14 @@ if ($callme_settings) {
 	$headers = getallheaders();
 
 	$signature = (isset($headers['X-Twilio-Signature']) ? $headers['X-Twilio-Signature']:'');
-
+	error_log(print_r(getallheaders(),1));
+	error_log('signature: '.$signature);
+	error_log(print_r($_POST),1);
 	if ($validator->validate($signature, $url, $postVars)) {
 
 		//do some twilio security validation up here
 
-		//error_log(print_r(getallheaders(),1));
-
+		
 		$twiml = new Services_Twilio_Twiml();
 		//print_r($callme_settings);
 		switch ($callme_settings['widget']['type']) {
