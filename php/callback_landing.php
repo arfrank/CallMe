@@ -10,7 +10,7 @@ if (!function_exists('add_action')) {
         require_once($wp_root.'/wp-config.php');
     }
 }
-include 'TwilioLibrary/Services/Twilio.php'
+require_once( 'TwilioLibrary/Services/Twilio.php');
 //Validate
 
 //Somehow store in the db
