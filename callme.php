@@ -233,7 +233,7 @@ if (true or $twilio_found) {
 					<h3>Twilio Credentials</h3>
 					<form action="#" method="post" accept-charset="utf-8">
 						<p><label>Twilio Account SID:<input type="text" name="twilio_sid" value="<?php echo (isset($callme_settings['twilio']['sid']) ? $callme_settings['twilio']['sid']:""); ?>"></label></p>
-						<p><label>Twilio Auth Token: <input type="password" name="twilio_token" value=""></label></p>
+						<p><label>Twilio Auth Token: <input type="password" name="twilio_token" value=""></label><?php echo isset($callme_settings['twilio']['token'])? " <b>Token Saved</b>":""; ?></p>
 					<h3>Widget Settings</h3>
 					<p>
 						<label>Location: <select name="widget_location">
