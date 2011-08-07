@@ -12,7 +12,9 @@ if (!function_exists('add_action')) {
 }
 require_once( 'TwilioLibrary/Services/Twilio.php');
 //Validate
-
+$twiml = new Services_Twilio_Twiml();
+$twiml->hangup();
+print $twiml;
 //Somehow store in the db
 
 //And be able to retrieve later
