@@ -412,6 +412,12 @@ if (true or $twilio_found) {
 	 * Content of Dashboard-Widget
 	 */
 	function callme_dashboard() {
+		global $callme_settings, $twilio_client;
+		if (isset($callme_settings['widget']['type']) && $callme_settings['widget']['type'] == 'voicemail') {
+			$entries = $twilio_client->account->recordings->getPage();
+		}else{
+			$entries = array();
+		}
 		echo '<h3>Recent Activity</h3>';
 		?>
 			<table>
@@ -420,12 +426,12 @@ if (true or $twilio_found) {
 						<th>Time</th>
 						<th>Action</th>
 						<th>Length</th>
-						<th>Poop</th>
+						<th>Link</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td>data</td>
+						<td colspan=4>Right now we don't collect the information from a response, so we are limited in what we can show here. Currently only recordings are supported, but it is known not to be perfect.  Whence Twilio supports filtering by Application we will quickly support seeing all calls, conferences and voicemails made with 100% accuracy.</td>
 					</tr>
 				</tbody>
 			</table>
