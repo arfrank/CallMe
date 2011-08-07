@@ -141,6 +141,7 @@ if (true or $twilio_found) {
 				$callme_settings['widget']['type'] = 'voicemail';
 				$callme_settings['voicemail']['widget_text'] = $_POST['widget_text'];
 				$callme_settings['voicemail']['welcome'] = $_POST['voicemail_welcome'];
+				$callme_settings['voicemail']['length'] = $_POST['voicemail_length'];
 				
 				break;
 		}
@@ -326,6 +327,9 @@ if (true or $twilio_found) {
 							</p>
 							<p>
 								<label for="voicemail_welcome">Message for voicemail: <textarea name="voicemail_welcome" rows="8" cols="40"><?php echo (isset($callme_settings['voicemail']['welcome']) ? $callme_settings['voicemail']['welcome']:''); ?></textarea></label>
+							</p>
+							<p>
+								<label for="voicemail_lenght">Voicemail Length: <input type="text" name="voicemail_length" value="<?php echo (isset($callme_settings['voicemail']['length'])? $callme_settings['voicemail']['length'] : '60'); ?>" id="voicemail_length"> seconds</label>
 							</p>
 							<input type="hidden" name="callme_type" value="voicemail">
 							<input type="submit" value="Save">

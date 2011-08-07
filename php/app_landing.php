@@ -62,7 +62,7 @@ if ($callme_settings) {
 			break;
 			case 'voicemail':
 				$twiml->say($callme_settings['voicemail']['welcome']);
-				$twiml->record(array('action'=>$callme_plugin_url.'/php/callback_landing.php'));
+				$twiml->record(array('action'=>$callme_plugin_url.'/php/callback_landing.php','maxLength'=>(is_int($callme_settings['voicemail']['length']) ? (int) $callme_settings['voicemail']['length'] : 60)));
 			break;
 		}
 		print $twiml;
