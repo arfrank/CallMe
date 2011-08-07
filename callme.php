@@ -99,12 +99,16 @@ if (true or $twilio_found) {
 	
 	}
 
-	if ($_POST['twilio_sid'] and $_POST['twilio_token']) {
+	if ($_POST['twilio_sid'] or $_POST['twilio_token']) {
 		if (!isset($callme_settings['twilio'])) {
 			$callme_settings['twilio'] = array();
 		}
-		$callme_settings['twilio']['sid'] = $_POST['twilio_sid'];
-		$callme_settings['twilio']['token'] = $_POST['twilio_token'];
+		if ($_POST['twilio_sid']) {
+			$callme_settings['twilio']['sid'] = $_POST['twilio_sid'];
+		}
+		if ($_POST['twilio_token'] && $_POST['twilio_token'] !='') {
+			$callme_settings['twilio']['token'] = $_POST['twilio_token'];
+		}
 		$callme_settings_changed = true;
 	}
 	if ($_POST['callme_type']) {
@@ -229,7 +233,7 @@ if (true or $twilio_found) {
 					<h3>Twilio Credentials</h3>
 					<form action="#" method="post" accept-charset="utf-8">
 						<p><label>Twilio Account SID:<input type="text" name="twilio_sid" value="<?php echo (isset($callme_settings['twilio']['sid']) ? $callme_settings['twilio']['sid']:""); ?>"></label></p>
-						<p><label>Twilio Auth Token: <input type="password" name="twilio_token" value="<?php echo (isset($callme_settings['twilio']['token']) ? $callme_settings['twilio']['token']:""); ?>"></label></p>
+						<p><label>Twilio Auth Token: <input type="password" name="twilio_token" value=""></label></p>
 					<h3>Widget Settings</h3>
 					<p>
 						<label>Location: <select name="widget_location">
