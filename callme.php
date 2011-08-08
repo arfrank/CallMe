@@ -434,8 +434,9 @@ if (true or $twilio_found) {
 			}
 		}
 		?></h4>
-		<div>Right now we don't collect the information from a response, so we are limited in what we can show here. Currently only recordings are supported, but it is known not to be perfect.  Whence Twilio supports filtering by Application we will quickly support seeing all calls, conferences and voicemails made with 100% accuracy.
-</div>
+
+		<div>Right now we don't collect the information from a response, so we are limited in what we can show here. Currently only recordings are supported, but it is known not to be perfect.  Whence Twilio supports filtering by Application we will quickly support seeing all calls, conferences and voicemails made with 100% accuracy.</div>
+
 		<table style="width:100%">
 				<thead>
 					<tr>

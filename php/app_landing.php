@@ -50,7 +50,6 @@ if ($callme_settings) {
 		switch ($callme_settings['widget']['type']) {
 			case 'callme':
 			$twiml->dial($callme_settings['callme']['your_number'], array('callerId'=>$callme_settings['callme']['twilio_number']));
-			//needs a from for dialing out
 			break;
 			case 'conference':
 			$twiml->say($callme_settings['conference']['conference_text']);
