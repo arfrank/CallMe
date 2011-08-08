@@ -1,3 +1,5 @@
+CallMe changes the way bloggers engage with their readers.
+
 To install for yourself simply:
 
 1. Goto wp-content/plugins directory in your wordpress install
