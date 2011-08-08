@@ -418,21 +418,43 @@ if (true or $twilio_found) {
 		}else{
 			$entries = array();
 		}
-		echo '<h3>Recent Activity</h3>';
+		echo '<h2>Recent Activity</h2>';
 		?>
-			<table>
+		<h3><?php
+		if (isset($callme_settings['widget']['type'])) {
+			switch ($callme_settings['widget']['type']) {
+				case 'voicemail':
+					echo "Recordings";
+					break;
+				case 'conference':
+					echo "Conferences";
+				default:
+					echo "Calls";
+					break;
+			}
+		}
+		?></h4>
+		<div>Right now we don't collect the information from a response, so we are limited in what we can show here. Currently only recordings are supported, but it is known not to be perfect.  Whence Twilio supports filtering by Application we will quickly support seeing all calls, conferences and voicemails made with 100% accuracy.
+</div>
+		<table style="width:100%">
 				<thead>
 					<tr>
 						<th>Time</th>
-						<th>Action</th>
 						<th>Length</th>
 						<th>Link</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td colspan=4>Right now we don't collect the information from a response, so we are limited in what we can show here. Currently only recordings are supported, but it is known not to be perfect.  Whence Twilio supports filtering by Application we will quickly support seeing all calls, conferences and voicemails made with 100% accuracy.</td>
-					</tr>
+					<?php foreach ($entries->recordings as $key => $value) {
+						$created = new DateTime($value->date_created);
+						?>
+								<td><?php echo $created->format('m-d-Y H:i:s'); ?> PST</td>
+								<td><?php echo $value->duration ?> Seconds</td>
+								<td><a href="https://api.twilio.com<?php echo $value->Uri ?>.mp3">Link</a></td>
+							</tr>
+							
+						<?php
+					} ?>
 				</tbody>
 			</table>
 		<?php
