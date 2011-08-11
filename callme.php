@@ -213,16 +213,17 @@ if (true or $twilio_found) {
 	function callme_conf(){
 		global $callme_settings, $twilio_client;
 		//Get a list of usable from numbers to make a phone number clal from.
-		$caller_ids = $twilio_client->account->outgoing_caller_ids->getPage();
-
-		$twilio_numbers = $twilio_client->account->incoming_phone_numbers->getPage();
-		
 		$phone_numbers = array();
-		foreach ($caller_ids->outgoing_caller_ids as $oci) {
-			$phone_numbers[] = $oci->phone_number;
-		}
-		foreach ($twilio_numbers->incoming_phone_numbers as $ipn) {
-			$phone_numbers[] = $ipn->phone_number;
+		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token'])) {
+			$caller_ids = $twilio_client->account->outgoing_caller_ids->getPage();
+			$twilio_numbers = $twilio_client->account->incoming_phone_numbers->getPage();
+
+			foreach ($caller_ids->outgoing_caller_ids as $oci) {
+				$phone_numbers[] = $oci->phone_number;
+			}
+			foreach ($twilio_numbers->incoming_phone_numbers as $ipn) {
+				$phone_numbers[] = $ipn->phone_number;
+			}
 		}
 		?>
 			<div>
