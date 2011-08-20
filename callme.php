@@ -214,7 +214,7 @@ if (true or $twilio_found) {
 		global $callme_settings, $twilio_client;
 		//Get a list of usable from numbers to make a phone number clal from.
 		$phone_numbers = array();
-		if (isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token'])) {
+		if (isset($twilio_client) and isset($callme_settings['twilio']['sid']) && isset($callme_settings['twilio']['token'])) {
 			$caller_ids = $twilio_client->account->outgoing_caller_ids->getPage();
 			$twilio_numbers = $twilio_client->account->incoming_phone_numbers->getPage();
 
@@ -364,13 +364,13 @@ if (true or $twilio_found) {
 			wp_enqueue_script('jquery');
 			wp_enqueue_script('jquery-form');
 			wp_enqueue_script('callme_twilio_script','http://static.twilio.com/libs/twiliojs/1.0/twilio.min.js');
-			wp_enqueue_script('callme_public_script', $callme_plugin_url.'/js/callme.js?id='.rand(), array('jquery', 'jquery-form','callme_twilio_script'));
+			wp_enqueue_script('callme_public_script', plugins_url().'/CallMe/js/callme.js?id='.rand(), array('jquery', 'jquery-form','callme_twilio_script'));
 
 		}else{
 		//Admin site scripts
 			  wp_enqueue_script('jquery');
 			  wp_enqueue_script('jquery-form');
-			  wp_enqueue_script('callme_admin_script', $callme_plugin_url.'/js/admin.js', array('jquery', 'jquery-form'),1,true);
+			  wp_enqueue_script('callme_admin_script', plugins_url().'/CallMe/js/admin.js', array('jquery', 'jquery-form'),1,true);
 		}
 	}
 
