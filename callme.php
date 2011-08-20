@@ -33,17 +33,38 @@ function callme_activate(){
 	$tw = load_twilio_library();
 	if (!$tw) {
 		throw new Exception("UNABLE TO FIND TWILIO LIBRARY", 1);
-		
 	}
 }
 
 $twilio_found = load_twilio_library();
-if (true or $twilio_found) {
+if ($twilio_found) {
 	$callme_settings = get_option('callme_settings',false);
 	$callme_settings_changed = false;
 
 	if (!$callme_settings) {
 		add_option('callme_settings',array(), '', 'yes');
+		$callme_settings = array();
+	}
+
+	if ($_POST['twilio_sid'] or $_POST['twilio_token']) {
+		$twilio_exception_caught = false;
+		try {
+			$twilio_client = new Services_Twilio($_POST['twilio_sid'], $_POST['twilio_token']);
+		} catch (Exception $e) {
+			$twilio_exception_caught = true;
+		}
+		if (!$twilio_exception_caught) {
+			if (!isset($callme_settings['twilio'])) {
+				$callme_settings['twilio'] = array();
+			}
+			if ($_POST['twilio_sid']) {
+				$callme_settings['twilio']['sid'] = $_POST['twilio_sid'];
+			}
+			if ($_POST['twilio_token'] && $_POST['twilio_token'] !='') {
+				$callme_settings['twilio']['token'] = $_POST['twilio_token'];
+			}
+			$callme_settings_changed = true;
+		}
 	}
 
 	add_filter( 'plugin_action_links', 'callme_plugin_action_links',10,2);
@@ -99,18 +120,7 @@ if (true or $twilio_found) {
 	
 	}
 
-	if ($_POST['twilio_sid'] or $_POST['twilio_token']) {
-		if (!isset($callme_settings['twilio'])) {
-			$callme_settings['twilio'] = array();
-		}
-		if ($_POST['twilio_sid']) {
-			$callme_settings['twilio']['sid'] = $_POST['twilio_sid'];
-		}
-		if ($_POST['twilio_token'] && $_POST['twilio_token'] !='') {
-			$callme_settings['twilio']['token'] = $_POST['twilio_token'];
-		}
-		$callme_settings_changed = true;
-	}
+
 	if ($_POST['callme_type']) {
 		if (!isset($callme_settings['widget'])) {
 			$callme_settings['widget'] = array();
@@ -137,7 +147,6 @@ if (true or $twilio_found) {
 				$callme_settings['conference']['length'] = (is_numeric($_POST['conference_length']) && (int) $_POST['conference_length'] > 0) ? (int) $_POST['conference_length'] : 0;
 				$callme_settings['conference']['autoconnect'] = ($_POST['conference_autoconnect'] == 'yes'?true:false);
 				break;
-			
 			case 'voicemail':
 				if (!isset($callme_settings['voicemail'])) {
 					$callme_settings['voicemail'] = array();
